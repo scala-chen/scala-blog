@@ -3,14 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>半精灵的博客</title>
+  <title>如何去掉之前合并的分支代码 | 半精灵的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="半精灵的博客">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
+<meta name="keywords" content="git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何去掉之前合并的分支代码">
+<meta property="og:url" content="http://yoursite.com/2017/04/28/如何去掉之前合并的分支代码/index.html">
 <meta property="og:site_name" content="半精灵的博客">
+<meta property="og:description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
+<meta property="og:updated_time" content="2017-04-30T15:45:41.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="半精灵的博客">
+<meta name="twitter:title" content="如何去掉之前合并的分支代码">
+<meta name="twitter:description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
   
     <link rel="alternate" href="/atom.xml" title="半精灵的博客" type="application/atom+xml">
   
@@ -46,7 +51,7 @@
     <div class="collapse navbar-collapse" id="main-menu-navbar">
       <ul class="nav navbar-nav">
         
-          <li><a class="active"
+          <li><a class=""
                  href="/index.html">首页</a></li>
         
           <li><a class=""
@@ -73,15 +78,13 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          
-  
-    <article id="post-如何去掉之前合并的分支代码" class="article article-type-post" itemscope itemprop="blogPost">
+          <article id="post-如何去掉之前合并的分支代码" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
     
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/04/28/如何去掉之前合并的分支代码/">如何去掉之前合并的分支代码</a>
+    <h1 class="article-title" itemprop="name">
+      如何去掉之前合并的分支代码
     </h1>
   
 
@@ -145,11 +148,10 @@
     </footer>
   </div>
   
-</article>
-
-
+    
 
   
+</article>
 
 
 
