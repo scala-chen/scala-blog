@@ -12,7 +12,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/04/28/如何去掉之前合并的分支代码/index.html">
 <meta property="og:site_name" content="半精灵的博客">
 <meta property="og:description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
-<meta property="og:updated_time" content="2017-04-30T15:45:41.000Z">
+<meta property="og:updated_time" content="2017-04-30T15:59:25.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何去掉之前合并的分支代码">
 <meta name="twitter:description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
@@ -109,23 +109,29 @@
 </blockquote>
 <p>假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到feature 1和feature 2之间的提交。但如果feature 1先于feature 2合并，并且合并后feature 1和feature 2两个分支也都删除了，该怎么办呢？</p>
 <p>如下是feature 1和feature 2合并到develop后的状态：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">feature 1 A---B</div><div class="line">         /     \   </div><div class="line">    C---D---E---F---G develop</div><div class="line">         \         /     </div><div class="line">feature 2 H---I---J</div></pre></td></tr></table></figure>
-<p>采用如下步骤，使得develop改为只含有feature 2的代码而不包含feature 1的代码。</p>
+<pre><code>feature 1 A---B
+         /     \   
+    C---D---E---F---G develop
+         \         /     
+feature 2 H---I---J       
+</code></pre><p>采用如下步骤，使得develop改为只含有feature 2的代码而不包含feature 1的代码：</p>
 <ol>
-<li><p>在提交D建立分支temp并切换到temp上，因为D是不包含feature 1和feature 2的干净的提交，是重新合并feature 2代码的最佳提交点。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout -b temp D</div></pre></td></tr></table></figure>
-</li>
-<li><p>将feature 2的完整代码复制到分支temp上，提交J包含feature 2的完整代码且不包含feature 1的代码。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git cherry-pick J</div></pre></td></tr></table></figure>
-</li>
-<li><p>删除develop分支，要使用-D参数强制删除，因为当前分支在temp上，develop上有未合并到temp上的代码，也就是feature 1的代码。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -D develop</div></pre></td></tr></table></figure>
-</li>
-<li><p>将temp改命为develop。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git branch -m temp develop</div></pre></td></tr></table></figure>
+<li>在提交D建立分支temp并切换到temp上，因为D是不包含feature 1和feature 2的干净的提交，是重新合并feature 2代码的最佳提交点。<pre>
+git checkout -b temp D
+</pre></li>
+<li>将feature 2的完整代码复制到分支temp上，提交J包含feature 2的完整代码且不包含feature 1的代码。<pre>
+git cherry-pick J
+</pre></li>
+<li>删除develop分支，要使用-D参数强制删除，因为当前分支在temp上，develop上有未合并到temp上的代码，也就是feature 1的代码。<pre>
+git branch -D develop
+</pre></li>
+<li>将temp改名为develop。<pre>
+git branch -m temp develop
+</pre>
+
 </li>
 </ol>
-<p>这样，就可以把feature 1的代码从develop分支上去掉，最终develop测试后就可以合并到master上进行发布了。有两点需要注意：1）charry-pick并没有把feature 2分支的完整历史复制到temp上，而仅仅是提交J；2）charry-pick产生的是一个新的提交，快照与J一样，但SHA1 ID是不同的。</p>
+<p>这样，就可以把feature 1的代码从develop分支上去掉，最终develop测试后就可以合并到master上进行发布了。有两点需要注意：1）charry-pick并没有把feature 2分支的完整历史复制到temp上，而仅仅是提交J；2）charry-pick是复制提交J的快照，但SHA1 ID与J不同，即产生的是一个新的提交。</p>
 <p>这只是比较简单的一种情景，实际情况肯定要复杂得多。需要对git操作——尤其是rebase、charry-pick等高级命令——熟悉并理解，明晰当前仓库的代码状态，清楚团队所使用的git工作流与发布流程，再加上大胆细心，就可以按需改变仓库代码历史。</p>
 
       
@@ -137,7 +143,7 @@
     
 
     <footer class="article-footer">
-      <!--a data-url="http://yoursite.com/2017/04/28/如何去掉之前合并的分支代码/" data-id="cj21onkox0000ov8m7vdoajb9" class="article-share-link">
+      <!--a data-url="http://yoursite.com/2017/04/28/如何去掉之前合并的分支代码/" data-id="cj24vqdof000053jh0fnaepy8" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a-->
       
