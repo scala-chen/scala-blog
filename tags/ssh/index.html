@@ -3,19 +3,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>如何去掉之前合并的分支代码 | 半精灵的博客</title>
+  <title>Tag: ssh | 半精灵的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
-<meta name="keywords" content="git">
-<meta property="og:type" content="article">
-<meta property="og:title" content="如何去掉之前合并的分支代码">
-<meta property="og:url" content="http://yoursite.com/2017/04/28/如何去掉之前合并的分支代码/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="半精灵的博客">
+<meta property="og:url" content="http://yoursite.com/tags/ssh/index.html">
 <meta property="og:site_name" content="半精灵的博客">
-<meta property="og:description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
-<meta property="og:updated_time" content="2017-04-30T15:59:25.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="如何去掉之前合并的分支代码">
-<meta name="twitter:description" content="灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。  假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到fea">
+<meta name="twitter:title" content="半精灵的博客">
   
     <link rel="alternate" href="/atom.xml" title="半精灵的博客" type="application/atom+xml">
   
@@ -78,98 +73,40 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          <article id="post-如何去掉之前合并的分支代码" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
+          
+  
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <header class="archive-article-header">
     
   
-    <h1 class="article-title" itemprop="name">
-      如何去掉之前合并的分支代码
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/07/04/GitPython通过ssh协议登录git仓库/">GitPython通过ssh协议登录git仓库</a>
     </h1>
   
 
 
-  </header>
-
-  <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2017/04/28/如何去掉之前合并的分支代码/" class="article-date"><time datetime="2017-04-28T10:14:10.000Z" itemprop="datePublished">2017-04-28</time></a>
+  <a href="/2017/07/04/GitPython通过ssh协议登录git仓库/" class="archive-article-date"><time datetime="2017-07-04T03:28:36.000Z" itemprop="datePublished">2017年07月</time></a>
 </div>
 
-    
-    
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>灵活运用checkout、branch、cherry-pick等命令，可以有效改变仓库代码的历史结构，为上线发布提供尽可能大的灵活性。</p>
-</blockquote>
-<p>假设这样一个实际中很常见的情景：有两个特性feature 1和feature 2并行开发完成，先后合并到develop分支后准备发布，但发布前临时决定feature 1不上线。如果feature 1的代码是后于feature 2合并的，可以很容易的回退到feature 1和feature 2之间的提交。但如果feature 1先于feature 2合并，并且合并后feature 1和feature 2两个分支也都删除了，该怎么办呢？</p>
-<p>如下是feature 1和feature 2合并到develop后的状态：</p>
-<pre><code>feature 1 A---B
-         /     \   
-    C---D---E---F---G develop
-         \         /     
-feature 2 H---I---J       
-</code></pre><p>采用如下步骤，使得develop改为只含有feature 2的代码而不包含feature 1的代码：</p>
-<ol>
-<li>在提交D建立分支temp并切换到temp上，因为D是不包含feature 1和feature 2的干净的提交，是重新合并feature 2代码的最佳提交点。<pre>
-git checkout -b temp D
-</pre></li>
-<li>将feature 2的完整代码复制到分支temp上，提交J包含feature 2的完整代码且不包含feature 1的代码。<pre>
-git cherry-pick J
-</pre></li>
-<li>删除develop分支，要使用-D参数强制删除，因为当前分支在temp上，develop上有未合并到temp上的代码，也就是feature 1的代码。<pre>
-git branch -D develop
-</pre></li>
-<li>将temp改名为develop。<pre>
-git branch -m temp develop
-</pre>
-
-</li>
-</ol>
-<p>这样，就可以把feature 1的代码从develop分支上去掉，最终develop测试后就可以合并到master上进行发布了。有两点需要注意：1）charry-pick并没有把feature 2分支的完整历史复制到temp上，而仅仅是提交J；2）charry-pick是复制提交J的快照，但SHA1 ID与J不同，即产生的是一个新的提交。</p>
-<p>这只是比较简单的一种情景，实际情况肯定要复杂得多。需要对git操作——尤其是rebase、charry-pick等高级命令——熟悉并理解，明晰当前仓库的代码状态，清楚团队所使用的git工作流与发布流程，再加上大胆细心，就可以按需改变仓库代码历史。</p>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <!--a data-url="http://yoursite.com/2017/04/28/如何去掉之前合并的分支代码/" data-id="cj4p1sm2u0003tw8mrla1wydl" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a-->
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-    
-<ul id="article-nav" class="nav nav-pills nav-justified">
-  
-  <li role="presentation">
-    <a href="/2017/05/04/Heroku开发SaaS应用的十二要素/" id="article-nav-older" class="article-nav-link-wrap">
-      <i class="fa fa-chevron-left pull-left"></i>
-      <span class="article-nav-link-title">Heroku开发SaaS应用的十二要素</span>
-    </a>
-  </li>
-  
-  
-</ul>
-
-
-  
+  </header>
 </article>
+
+  
+  
+    </div></section>
+  
 
 
 
